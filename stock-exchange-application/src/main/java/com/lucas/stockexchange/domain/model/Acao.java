@@ -3,7 +3,6 @@ package com.lucas.stockexchange.domain.model;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Data
 @Entity
@@ -15,12 +14,13 @@ public class Acao {
     private String nome;
     @Column(nullable = false, length = 45)
     private String sigla;
-    @Column(nullable = false, length = 45)
-    private String tipo;
+    @Column
+    private TipoAcao tipo;
     @Column(nullable = false, length = 500)
     private String descricao;
     @Column(nullable = false)
     private Integer quantidade;
-    @OneToMany(mappedBy = "acao")
-    private List<HistoricoValor> historicoValores;
+    @ManyToOne
+    @JoinColumn(name = "setor_id")
+    private Setor setor;
 }

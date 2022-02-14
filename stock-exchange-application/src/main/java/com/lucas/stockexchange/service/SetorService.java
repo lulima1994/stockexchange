@@ -1,15 +1,9 @@
 package com.lucas.stockexchange.service;
 
-import com.lucas.stockexchange.domain.model.Acao;
 import com.lucas.stockexchange.domain.model.Setor;
-import com.lucas.stockexchange.domain.repository.AcaoRepository;
 import com.lucas.stockexchange.domain.repository.SetorRepository;
-import com.lucas.stockexchange.dto.acao.AcaoRequest;
-import com.lucas.stockexchange.dto.acao.AcaoResponse;
 import com.lucas.stockexchange.dto.setor.SetorRequest;
 import com.lucas.stockexchange.dto.setor.SetorResponse;
-import com.lucas.stockexchange.service.mapper.acao.AcaoMapper;
-import com.lucas.stockexchange.service.mapper.acao.AcaoResponseMapper;
 import com.lucas.stockexchange.service.mapper.setor.SetorMapper;
 import com.lucas.stockexchange.service.mapper.setor.SetorResponseMapper;
 import lombok.RequiredArgsConstructor;
