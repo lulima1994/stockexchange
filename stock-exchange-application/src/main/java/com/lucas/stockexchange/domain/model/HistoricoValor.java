@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-public class HistoricoValores {
+public class HistoricoValor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,6 +17,6 @@ public class HistoricoValores {
     @Column(nullable = false)
     private BigDecimal valor;
     @ManyToOne
-    @JoinColumn(name = "acoes_id")
-    private Acoes acoes;
+    @JoinColumn(name = "acao_id")
+    private Acao acao;
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @Entity
-public class Acoes {
+public class Acao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,6 +21,6 @@ public class Acoes {
     private String descricao;
     @Column(nullable = false)
     private Integer quantidade;
-    @OneToMany(mappedBy = "acoes")
-    private List<HistoricoValores> historicoValores;
+    @OneToMany(mappedBy = "acao")
+    private List<HistoricoValor> historicoValores;
 }
