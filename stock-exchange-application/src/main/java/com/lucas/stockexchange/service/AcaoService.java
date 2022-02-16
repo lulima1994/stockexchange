@@ -9,7 +9,6 @@ import com.lucas.stockexchange.dto.acao.AcaoResponse;
 import com.lucas.stockexchange.service.mapper.acao.AcaoMapper;
 import com.lucas.stockexchange.service.mapper.acao.AcaoResponseMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,7 @@ public class AcaoService {
         Acao acao = acaoMapper.mapear(acaoRequest);
         acaoRepository.save(acao);
         HistoricoValor historicoValor = new HistoricoValor();
-        historicoValor.setValor(acaoRequest.getValor().divide(BigDecimal.valueOf(acaoRequest.getQuantidade()),2, RoundingMode.HALF_UP));
+        historicoValor.setValor(acaoRequest.getValor().divide(BigDecimal.valueOf(acaoRequest.getQuantidade()), 2, RoundingMode.HALF_UP));
         historicoValor.setDataHora(LocalDateTime.now());
         historicoValor.setAcao(acao);
         historicoValorRepository.save(historicoValor);
@@ -46,14 +45,12 @@ public class AcaoService {
         Optional<Acao> acaoOptional = acaoRepository.findById(id);
         if (acaoOptional.isEmpty())
             throw new RuntimeException("acao " + id + " nao encontrada");
-        AcaoResponse acaoResponse = acaoResponseMapper.mapear(acaoOptional.get());
-        return acaoResponse;
+        return acaoResponseMapper.mapear(acaoOptional.get());
     }
 
     public Page<AcaoResponse> buscarPorPagina(Pageable pageable) {
         Page<Acao> acaos = acaoRepository.findAll(pageable);
-        Page<AcaoResponse> acaoResponses = acaos.map(acaoResponseMapper::mapear);
-        return acaoResponses;
+        return acaos.map(acaoResponseMapper::mapear);
     }
 
     public void deletarPorId(Long id) {
