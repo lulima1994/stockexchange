@@ -23,7 +23,7 @@ public class AcaoResponseMapper {
         acaoResponse.setDescricao(acao.getDescricao());
         acaoResponse.setQuantidade(acao.getQuantidade());
         acaoResponse.setValor(historicoValorRepository.findCurrentByInitial(acao.getSigla(), pageRequest)
-                .getContent().get(0).getValor());
+                 .getContent().get(0).getValor());
         return acaoResponse;
     }
 }
