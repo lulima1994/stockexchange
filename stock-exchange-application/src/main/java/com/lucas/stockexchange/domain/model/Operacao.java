@@ -16,7 +16,15 @@ public class Operacao {
     private LocalDateTime dataHora;
     @Column(nullable = false)
     private BigDecimal valor;
+    @Column(nullable = false)
+    private Integer quantidade;
     @ManyToOne
-    @JoinColumn(name = "carteira_id")
-    private Carteira carteira;
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
+    @ManyToOne
+    @JoinColumn(name = "acao_id")
+    private Acao acao;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TipoOperacao tipo;
 }
