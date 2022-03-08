@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 public class SetorMapper {
     public Setor mapear(SetorRequest setorRequest) {
         Setor setor = new Setor();
+        setor.setId(setorRequest.getId());
         setor.setNome(setorRequest.getNome());
         setor.setDescricao(setorRequest.getDescricao());
         return setor;

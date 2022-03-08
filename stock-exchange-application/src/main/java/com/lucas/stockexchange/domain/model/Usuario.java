@@ -17,5 +17,5 @@ public class Usuario {
     @Column(nullable = false, length = 45)
     private String senha;
     @Column(nullable = false)
-    private Integer cpf;
+    private String cpf;
 }

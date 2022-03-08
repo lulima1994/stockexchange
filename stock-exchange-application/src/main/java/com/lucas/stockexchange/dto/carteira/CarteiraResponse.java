@@ -1,4 +1,4 @@
-package com.lucas.stockexchange.dto.usuario;
+package com.lucas.stockexchange.dto.carteira;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 @NoArgsConstructor
-public class UsuarioResponse {
+public class CarteiraResponse {
     private Long id;
-    private String nome;
-    private String login;
-    private String cpf;
+    private Integer quantidade;
+    private Long usuarioId;
+    private Long acaoId;
 }

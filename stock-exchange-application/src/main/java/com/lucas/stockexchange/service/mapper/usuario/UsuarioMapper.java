@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 public class UsuarioMapper {
     public Usuario mapear(UsuarioRequest usuarioRequest) {
         Usuario usuario = new Usuario();
+        usuario.setId(usuarioRequest.getId());
         usuario.setNome(usuarioRequest.getNome());
         usuario.setLogin(usuarioRequest.getLogin());
         usuario.setSenha(usuarioRequest.getSenha());

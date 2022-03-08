@@ -13,6 +13,7 @@ public class AcaoMapper {
 
     public Acao mapear(AcaoRequest acaoRequest) {
         Acao acao = new Acao();
+        acao.setId(acaoRequest.getId());
         acao.setNome(acaoRequest.getNome());
         acao.setSigla(acaoRequest.getSigla());
         acao.setTipo(acaoRequest.getTipo());
