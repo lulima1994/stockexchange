@@ -10,5 +10,7 @@ import java.math.BigDecimal;
 public class OperacaoRequest {
     private Long id;
     private BigDecimal valor;
-    private Long carteiraId;
+    private Integer quantidade;
+    private Long usuarioId;
+    private Long acaoId;
 }

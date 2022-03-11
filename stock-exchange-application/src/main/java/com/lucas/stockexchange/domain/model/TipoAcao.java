@@ -1,8 +1,8 @@
 package com.lucas.stockexchange.domain.model;
 
 public enum TipoAcao {
-    ORDINARIA,
-    PREFERENCIAL,
+    ORDINARIA,//3
+    PREFERENCIAL,//4
     FII,
     BDR
 }

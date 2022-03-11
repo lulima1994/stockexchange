@@ -16,6 +16,6 @@ public class Usuario {
     private String login;
     @Column(nullable = false, length = 45)
     private String senha;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 45)
     private String cpf;
 }

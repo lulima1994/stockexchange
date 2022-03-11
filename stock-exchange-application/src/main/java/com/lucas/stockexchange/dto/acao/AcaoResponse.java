@@ -1,6 +1,7 @@
 package com.lucas.stockexchange.dto.acao;
 
 import com.lucas.stockexchange.domain.model.TipoAcao;
+import com.lucas.stockexchange.dto.setor.SetorResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,8 +17,8 @@ public class AcaoResponse {
     private Long id;
     private String nome;
     private String sigla;
-    private TipoAcao tipo;
-    private String descricao;
-    private Integer quantidade;
     private BigDecimal valor;
+    private Integer quantidade;
+    private TipoAcao tipo;
+    private SetorResponse setorResponse;
 }

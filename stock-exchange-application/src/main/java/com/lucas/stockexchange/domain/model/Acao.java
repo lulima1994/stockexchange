@@ -3,6 +3,7 @@ package com.lucas.stockexchange.domain.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Data
 @Entity
@@ -14,12 +15,13 @@ public class Acao {
     private String nome;
     @Column(nullable = false, length = 45)
     private String sigla;
-    @Column
-    private TipoAcao tipo;
-    @Column(nullable = false, length = 500)
-    private String descricao;
+    @Column(nullable = false)
+    private BigDecimal valor;
     @Column(nullable = false)
     private Integer quantidade;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TipoAcao tipo;
     @ManyToOne
     @JoinColumn(name = "setor_id")
     private Setor setor;

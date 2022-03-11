@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface OperacaoRepository extends JpaRepository<Operacao, Long> {
     @Query("select o from Operacao o where usuario.login=:login")
-    Page<Operacao> findCurrentByLogin(String login, Pageable pageable);
+    Page<Operacao> findByLogin(String login, Pageable pageable);
 }

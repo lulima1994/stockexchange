@@ -12,7 +12,7 @@ public class HistoricoValor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
+    @Column(nullable = false)
     private LocalDateTime dataHora;
     @Column(nullable = false)
     private BigDecimal valor;

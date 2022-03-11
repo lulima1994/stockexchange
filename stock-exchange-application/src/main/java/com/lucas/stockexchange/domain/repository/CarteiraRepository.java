@@ -8,8 +8,8 @@ import java.util.Optional;
 
 public interface CarteiraRepository extends JpaRepository<Carteira, Long> {
     @Query("select c from Carteira c where c.quantidade=:quantidade")
-    Optional<Carteira> findByQtd(Integer quantidade);
+    Optional<Carteira> findByQuantidade(Integer quantidade);
 
     @Query("select c from Carteira c where c.usuario.id=:usuarioId and c.acao.id=:acaoId")
-    Optional<Carteira> verifyWallet(Long usuarioId, Long acaoId);
+    Optional<Carteira> verifyCarteira(Long usuarioId, Long acaoId);
 }

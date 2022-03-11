@@ -16,9 +16,9 @@ public class AcaoMapper {
         acao.setId(acaoRequest.getId());
         acao.setNome(acaoRequest.getNome());
         acao.setSigla(acaoRequest.getSigla());
-        acao.setTipo(acaoRequest.getTipo());
-        acao.setDescricao(acaoRequest.getDescricao());
+        acao.setValor(acaoRequest.getValor());
         acao.setQuantidade(acaoRequest.getQuantidade());
+        acao.setTipo(acaoRequest.getTipo());
         acao.setSetor(setorRepository.findById(acaoRequest.getSetorId()).orElseThrow());
         return acao;
     }

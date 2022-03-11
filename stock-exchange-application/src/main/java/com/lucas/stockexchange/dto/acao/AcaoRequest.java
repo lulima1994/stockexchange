@@ -12,9 +12,8 @@ public class AcaoRequest {
     private Long id;
     private String nome;
     private String sigla;
-    private TipoAcao tipo;
-    private String descricao;
-    private Integer quantidade;
-    private Long setorId;
     private BigDecimal valor;
+    private Integer quantidade;
+    private TipoAcao tipo;
+    private Long setorId;
 }
