@@ -2,7 +2,6 @@ package com.lucas.stockexchange.dto.operacao;
 
 import com.lucas.stockexchange.domain.model.TipoOperacao;
 import com.lucas.stockexchange.dto.acao.AcaoResponse;
-import com.lucas.stockexchange.dto.usuario.UsuarioResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +20,5 @@ public class OperacaoResponse {
     private BigDecimal valor;
     private Integer quantidade;
     private TipoOperacao tipo;
-    private UsuarioResponse usuarioResponse;
-    private AcaoResponse acaoResponse;
+    private OperacaoAcaoResponse acao;//renomear ACAO
 }

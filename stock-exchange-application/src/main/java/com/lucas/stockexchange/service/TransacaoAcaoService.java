@@ -1,12 +1,16 @@
 package com.lucas.stockexchange.service;
 
 import com.lucas.stockexchange.domain.model.*;
-import com.lucas.stockexchange.domain.repository.*;
+import com.lucas.stockexchange.domain.repository.AcaoRepository;
+import com.lucas.stockexchange.domain.repository.CarteiraRepository;
+import com.lucas.stockexchange.domain.repository.OperacaoRepository;
+import com.lucas.stockexchange.domain.repository.UsuarioRepository;
+import com.lucas.stockexchange.dto.carteira.CarteiraResponse;
 import com.lucas.stockexchange.dto.transacaoacao.TransacaoAcaoRequest;
 import com.lucas.stockexchange.dto.transacaoacao.TransacaoAcaoResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,10 +23,13 @@ public class TransacaoAcaoService {
     private final UsuarioRepository usuarioRepository;
     private final CarteiraRepository carteiraRepository;
     private final AcaoRepository acaoRepository;
-    private final HistoricoValorRepository historicoValorRepository;
     private final OperacaoRepository operacaoRepository;
+    private final ValorAcaoService valorAcaoService;
 
     public TransacaoAcaoResponse comprar(TransacaoAcaoRequest transacaoAcaoRequest) {
+        if (transacaoAcaoRequest.getQuantidade() <= 0) {
+            throw new RuntimeException("quantidade de compra irregular");
+        }
         Optional<Usuario> login = usuarioRepository.findByLogin(transacaoAcaoRequest.getLogin());
         if (login.isEmpty()) {
             throw new RuntimeException("usuario " + transacaoAcaoRequest.getLogin() + " nao encontrado");
@@ -38,10 +45,11 @@ public class TransacaoAcaoService {
         if (optionalCarteira.isPresent()) {
             carteira = optionalCarteira.get();
             carteira.setQuantidade(carteira.getQuantidade() + transacaoAcaoRequest.getQuantidade());
-            if (acao.getQuantidade() <= 0) {
+            if (acao.getQuantidade() - transacaoAcaoRequest.getQuantidade() < 0) {
                 throw new RuntimeException("quantidade de acao " + transacaoAcaoRequest.getSigla() + " nao disponivel");
+            } else {
+                acao.setQuantidade(acao.getQuantidade() - transacaoAcaoRequest.getQuantidade());
             }
-            acao.setQuantidade(acao.getQuantidade() - transacaoAcaoRequest.getQuantidade());
         } else {
             carteira = new Carteira();
             carteira.setUsuario(usuario);
@@ -57,6 +65,9 @@ public class TransacaoAcaoService {
     }
 
     public TransacaoAcaoResponse vender(TransacaoAcaoRequest transacaoAcaoRequest) {
+        if (transacaoAcaoRequest.getQuantidade() <= 0) {
+            throw new RuntimeException("quantidade de venda irregular");
+        }
         Optional<Usuario> login = usuarioRepository.findByLogin(transacaoAcaoRequest.getLogin());
         if (login.isEmpty()) {
             throw new RuntimeException("usuario " + transacaoAcaoRequest.getLogin() + " nao encontrado");
@@ -89,14 +100,12 @@ public class TransacaoAcaoService {
 
     private Operacao registrarOperacao(Integer quantidade, Usuario usuario, Acao acao, TipoOperacao tipoOperacao) {
         Operacao operacao = new Operacao();
-        PageRequest pageRequest = PageRequest.of(0, 1, Sort.Direction.DESC, "dataHora");
         operacao.setDataHora(LocalDateTime.now());
-        operacao.setValor(historicoValorRepository.findBySigla(acao.getSigla(), pageRequest)
-                .getContent().get(0).getValor());
         operacao.setQuantidade(quantidade);
         operacao.setUsuario(usuario);
         operacao.setAcao(acao);
         operacao.setTipo(tipoOperacao);
+        operacao.setValor(valorAcaoService.valorAtual(acao.getSigla()));
         operacaoRepository.save(operacao);
         return operacao;
     }
@@ -110,5 +119,17 @@ public class TransacaoAcaoService {
         transacaoAcaoResponse.setQuantidadeCarteira(carteira.getQuantidade());
         transacaoAcaoResponse.setTipo(operacao.getTipo());
         return transacaoAcaoResponse;
+    }
+
+    public Page<CarteiraResponse> buscarPorCpf(String cpf, Pageable pageable) {
+        Page<Carteira> carteiras = carteiraRepository.findByCpf(cpf, pageable);
+        return carteiras.map((cadaCarteira) -> {
+            CarteiraResponse carteiraResponse = new CarteiraResponse();
+            carteiraResponse.setSigla(cadaCarteira.getAcao().getSigla());
+            carteiraResponse.setQuantidade(cadaCarteira.getQuantidade());
+            carteiraResponse.setValorAtual(valorAcaoService.valorAtual(cadaCarteira.getAcao().getSigla()));
+            //carteiraResponse.setCustoMedio();
+            return carteiraResponse;
+        });
     }
 }

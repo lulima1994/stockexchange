@@ -1,1 +1,1 @@
-SELECT * FROM stock_exchange.historico_valor;
+SELECT * FROM stock_exchange.usuario;

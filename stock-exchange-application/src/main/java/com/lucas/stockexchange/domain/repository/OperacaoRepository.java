@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface OperacaoRepository extends JpaRepository<Operacao, Long> {
-    @Query("select o from Operacao o where usuario.login=:login")
+    @Query("select o from Operacao o where o.usuario.login=:login")
     Page<Operacao> findByLogin(String login, Pageable pageable);
 }
