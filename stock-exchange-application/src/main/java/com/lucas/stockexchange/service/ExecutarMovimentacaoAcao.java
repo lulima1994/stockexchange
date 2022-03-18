@@ -21,43 +21,62 @@ public class ExecutarMovimentacaoAcao {
     private final OperacaoRepository operacaoRepository;
 
     @Transactional
+    public void executarPedidos() {
+        executarCompras();
+        executarVendas();
+    }
+
+    @Transactional
     public void executarCompras() {
         List<Pedido> pedidos = pedidoRepository.buscarPedidosAbertosComprasExecutaveis();
-        for (int i = 0; i < pedidos.size(); i++) { //for(Pedido cadaPedido : pedidos)
-            Pedido cadaPedido = pedidos.get(i);
-            Usuario usuario = cadaPedido.getUsuario();
-            Acao acao = cadaPedido.getAcao();
-            Optional<Carteira> optionalCarteira = carteiraRepository.verifyCarteira(usuario.getId(), acao.getId());
-            Carteira carteira;
-            if (optionalCarteira.isPresent()) {
-                carteira = optionalCarteira.get();
-                carteira.setQuantidade(carteira.getQuantidade() + cadaPedido.getQuantidade());
-            } else {
-                carteira = new Carteira();
-                carteira.setUsuario(usuario);
-                carteira.setAcao(acao);
-                carteira.setQuantidade(cadaPedido.getQuantidade());
-            }
-            carteiraRepository.save(carteira);
-            registrarOperacao(cadaPedido.getQuantidade(), usuario, acao, TipoOperacao.CREDITO);
-            cadaPedido.setStatus(StatusPedido.EXECUTADO);
-            pedidoRepository.save(cadaPedido);
+        for (Pedido cadaPedido : pedidos) {
+            registrarCarteira(cadaPedido);
+            registrarOperacao(cadaPedido, TipoOperacao.CREDITO);
+            atualizarStatus(cadaPedido);
         }
     }
 
+    @Transactional
     public void executarVendas() {
-
+        List<Pedido> pedidos = pedidoRepository.buscarPedidosAbertosVendasExecutaveis();
+        for (Pedido cadaPedido : pedidos) {
+            registrarCarteira(cadaPedido);
+            registrarOperacao(cadaPedido, TipoOperacao.DEBITO);
+            atualizarStatus(cadaPedido);
+        }
     }
 
-    private Operacao registrarOperacao(Integer quantidade, Usuario usuario, Acao acao, TipoOperacao tipoOperacao) {
+    private void registrarCarteira(Pedido pedido) {
+        Usuario usuario = pedido.getUsuario();
+        Acao acao = pedido.getAcao();
+        Optional<Carteira> optionalCarteira = carteiraRepository.verifyCarteira(usuario.getId(), acao.getId());
+        Carteira carteira;
+        if (optionalCarteira.isPresent()) {
+            carteira = optionalCarteira.get();
+            carteira.setQuantidade(carteira.getQuantidade() + pedido.getQuantidade());
+        } else {
+            carteira = new Carteira();
+            carteira.setUsuario(usuario);
+            carteira.setAcao(acao);
+            carteira.setQuantidade(pedido.getQuantidade());
+        }
+        carteiraRepository.save(carteira);
+    }
+
+    private Operacao registrarOperacao(Pedido pedido, TipoOperacao tipoOperacao) {
         Operacao operacao = new Operacao();
         operacao.setDataHora(LocalDateTime.now());
-        operacao.setQuantidade(quantidade);
-        operacao.setUsuario(usuario);
-        operacao.setAcao(acao);
+        operacao.setQuantidade(pedido.getQuantidade());
+        operacao.setUsuario(pedido.getUsuario());
+        operacao.setAcao(pedido.getAcao());
         operacao.setTipo(tipoOperacao);
-        operacao.setValor(valorAcaoService.valorAtual(acao));
+        operacao.setValor(valorAcaoService.valorAtual(pedido.getAcao()));
         operacaoRepository.save(operacao);
         return operacao;
+    }
+
+    private void atualizarStatus(Pedido pedido) {
+        pedido.setStatus(StatusPedido.EXECUTADO);
+        pedidoRepository.save(pedido);
     }
 }

@@ -32,7 +32,7 @@ public class TransacaoAcaoService {
         Usuario usuario = validarUsuario(transacaoAcaoRequest);
         Acao acao = validarAcao(transacaoAcaoRequest);
         Pedido pedido = registrarPedido(usuario, acao, transacaoAcaoRequest, TipoTransacao.COMPRA);
-        executarMovimentacaoAcao.executarCompras();
+        executarMovimentacaoAcao.executarPedidos();
         return new TransacaoAcaoResponse(pedido.getId());
     }
 
@@ -41,6 +41,7 @@ public class TransacaoAcaoService {
         Usuario usuario = validarUsuario(transacaoAcaoRequest);
         Acao acao = validarAcao(transacaoAcaoRequest);
         Pedido pedido = registrarPedido(usuario, acao, transacaoAcaoRequest, TipoTransacao.VENDA);
+        executarMovimentacaoAcao.executarPedidos();
         return new TransacaoAcaoResponse(pedido.getId());
     }
 
