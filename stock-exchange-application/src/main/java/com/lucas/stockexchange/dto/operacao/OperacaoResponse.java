@@ -20,5 +20,5 @@ public class OperacaoResponse {
     private BigDecimal valor;
     private Integer quantidade;
     private TipoOperacao tipo;
-    private OperacaoAcaoResponse acao;//renomear ACAO
+    private OperacaoAcaoResponse acao;
 }

@@ -22,13 +22,13 @@ public class TransacaoAcaoController {
 
     @PostMapping("/comprar")
     public ResponseEntity<TransacaoAcaoResponse> comprar(@RequestBody TransacaoAcaoRequest transacaoAcaoRequest) {
-        TransacaoAcaoResponse transacaoAcaoResponse = transacaoAcaoService.comprar(transacaoAcaoRequest);
+        TransacaoAcaoResponse transacaoAcaoResponse = transacaoAcaoService.registrarCompra(transacaoAcaoRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(transacaoAcaoResponse);
     }
 
     @PostMapping("/vender")
     public ResponseEntity<TransacaoAcaoResponse> vender(@RequestBody TransacaoAcaoRequest transacaoAcaoRequest) {
-        TransacaoAcaoResponse transacaoAcaoResponse = transacaoAcaoService.vender(transacaoAcaoRequest);
+        TransacaoAcaoResponse transacaoAcaoResponse = transacaoAcaoService.registrarVenda(transacaoAcaoRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(transacaoAcaoResponse);
     }
 
