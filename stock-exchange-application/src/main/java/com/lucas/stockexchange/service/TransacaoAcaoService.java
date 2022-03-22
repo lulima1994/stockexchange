@@ -45,6 +45,12 @@ public class TransacaoAcaoService {
         return new TransacaoAcaoResponse(pedido.getId());
     }
 
+    public void cancelarPedido(Long id) {
+        Pedido pedido = pedidoRepository.findById(id).orElseThrow();
+        pedido.setStatus(StatusPedido.CANCELADO);
+        pedidoRepository.save(pedido);
+    }
+
     public Page<CarteiraResponse> buscarPorCpf(String cpf, Pageable pageable) {
         Page<Carteira> carteiras = carteiraRepository.findByCpf(cpf, pageable);
         return carteiras.map((cadaCarteira) -> {

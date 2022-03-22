@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,7 @@ public class ExecutarMovimentacaoAcao {
     private final CarteiraRepository carteiraRepository;
     private final ValorAcaoService valorAcaoService;
     private final OperacaoRepository operacaoRepository;
+    private final AjustarValorAcao ajustarValorAcao;
 
     @Transactional
     public void executarPedidos() {
@@ -33,6 +35,7 @@ public class ExecutarMovimentacaoAcao {
             registrarCarteira(cadaPedido);
             registrarOperacao(cadaPedido, TipoOperacao.CREDITO);
             atualizarStatus(cadaPedido);
+            ajustarValorAcao.adicionarPedidos(cadaPedido);
         }
     }
 
@@ -43,6 +46,7 @@ public class ExecutarMovimentacaoAcao {
             registrarCarteira(cadaPedido);
             registrarOperacao(cadaPedido, TipoOperacao.DEBITO);
             atualizarStatus(cadaPedido);
+            ajustarValorAcao.adicionarPedidos(cadaPedido);
         }
     }
 
@@ -53,12 +57,22 @@ public class ExecutarMovimentacaoAcao {
         Carteira carteira;
         if (optionalCarteira.isPresent()) {
             carteira = optionalCarteira.get();
-            carteira.setQuantidade(carteira.getQuantidade() + pedido.getQuantidade());
+            if (pedido.getTipo() == (TipoTransacao.COMPRA)) {
+                carteira.setQuantidade(carteira.getQuantidade() + pedido.getQuantidade());
+            } else if (carteira.getQuantidade() - pedido.getQuantidade() >= 0) {
+                carteira.setQuantidade(carteira.getQuantidade() - pedido.getQuantidade());
+            } else {
+                throw new RuntimeException("venda nao disponivel");
+            }
         } else {
             carteira = new Carteira();
             carteira.setUsuario(usuario);
             carteira.setAcao(acao);
-            carteira.setQuantidade(pedido.getQuantidade());
+            if (pedido.getTipo() == (TipoTransacao.COMPRA)) {
+                carteira.setQuantidade(pedido.getQuantidade());
+            } else {
+                throw new RuntimeException("venda nao disponivel");
+            }
         }
         carteiraRepository.save(carteira);
     }

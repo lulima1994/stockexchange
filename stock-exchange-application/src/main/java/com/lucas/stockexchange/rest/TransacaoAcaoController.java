@@ -10,10 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,13 +18,13 @@ public class TransacaoAcaoController {
     private final TransacaoAcaoService transacaoAcaoService;
 
     @PostMapping("/comprar")
-    public ResponseEntity<TransacaoAcaoResponse> comprar(@RequestBody TransacaoAcaoRequest transacaoAcaoRequest) {
+    public ResponseEntity<TransacaoAcaoResponse> comprarAcao(@RequestBody TransacaoAcaoRequest transacaoAcaoRequest) {
         TransacaoAcaoResponse transacaoAcaoResponse = transacaoAcaoService.registrarCompra(transacaoAcaoRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(transacaoAcaoResponse);
     }
 
     @PostMapping("/vender")
-    public ResponseEntity<TransacaoAcaoResponse> vender(@RequestBody TransacaoAcaoRequest transacaoAcaoRequest) {
+    public ResponseEntity<TransacaoAcaoResponse> venderAcao(@RequestBody TransacaoAcaoRequest transacaoAcaoRequest) {
         TransacaoAcaoResponse transacaoAcaoResponse = transacaoAcaoService.registrarVenda(transacaoAcaoRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(transacaoAcaoResponse);
     }
@@ -36,5 +33,11 @@ public class TransacaoAcaoController {
     public ResponseEntity<Page<CarteiraResponse>> buscarCarteira(String cpf, @PageableDefault(sort = {"acao.sigla"}) Pageable pageable) {
         Page<CarteiraResponse> carteiraResponses = transacaoAcaoService.buscarPorCpf(cpf, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(carteiraResponses);
+    }
+
+    @DeleteMapping("/cancelar/{id}")
+    public ResponseEntity<Void> cancelarPedido(@PathVariable Long id) {
+        transacaoAcaoService.cancelarPedido(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

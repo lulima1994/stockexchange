@@ -33,7 +33,7 @@ public class AcaoService {
         acaoRepository.save(acao);
         HistoricoValor historicoValor = new HistoricoValor();
         historicoValor.setDataHora(LocalDateTime.now());
-        historicoValor.setValor(acaoRequest.getValor().divide(BigDecimal.valueOf(acaoRequest.getQuantidade()), 2, RoundingMode.HALF_UP));
+        historicoValor.setValor(acaoRequest.getValor().divide(BigDecimal.valueOf(acaoRequest.getQuantidade()), 2, RoundingMode.HALF_UP));//calculo valor da acao
         historicoValor.setAcao(acao);
         historicoValorRepository.save(historicoValor);
         AcaoResponse acaoResponse = acaoResponseMapper.mapear(acao);
