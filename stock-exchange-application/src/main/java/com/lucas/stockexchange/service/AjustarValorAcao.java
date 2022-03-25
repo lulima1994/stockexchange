@@ -35,26 +35,29 @@ public class AjustarValorAcao {
 
     @Scheduled(cron = "0/30 * * * * *")
     @Transactional
-    public void executarAjustes() {
-        log.info("Executando ajustes de valores");
-        // Busca todos os pedidos que ainda nao liquidaram o valor da acao no banco
+    public synchronized void executarAjustes() {
+        log.info("executando ajustes de valores");
+        // busca todos os pedidos que ainda nao liquidaram o valor da acao no banco
         List<PedidoExecutadoTemp> todosPedidos = pedidoExecutadoTempRepository.findAll();
 
-        // Agrupa por acao o somatorio de valores dos pedidos que nao foram liquidados. O hashmap contem <ID da acao, Valor agrupado>
+        // agrupa por acao o somatorio de valores dos pedidos que nao foram liquidados. o hashmap contem <id da acao, valor agrupado>
         HashMap<Long, PedidoExecutadoDTO> pedidosAgrupados = new HashMap<>();
         for (PedidoExecutadoTemp cadaPedido : todosPedidos) {
-            PedidoExecutadoDTO pedidoAgrupado = pedidosAgrupados.getOrDefault(cadaPedido.getPedido().getAcao().getId(), new PedidoExecutadoDTO(cadaPedido.getPedido().getAcao()));
+            PedidoExecutadoDTO pedidoAgrupado = pedidosAgrupados.getOrDefault(cadaPedido.getPedido().getAcao().getId(),
+                    new PedidoExecutadoDTO(cadaPedido.getPedido().getAcao()));
             if (cadaPedido.getTipo() == TipoTransacao.COMPRA) {
                 pedidoAgrupado.setQuantidade(pedidoAgrupado.getQuantidade() + cadaPedido.getQuantidade());
-                pedidoAgrupado.setValorAcumulado(pedidoAgrupado.getValorAcumulado().add(cadaPedido.getPedido().getValor().multiply(BigDecimal.valueOf(cadaPedido.getQuantidade()))));
+                pedidoAgrupado.setValorAcumulado(pedidoAgrupado.getValorAcumulado().add(cadaPedido.getPedido()
+                        .getValor().multiply(BigDecimal.valueOf(cadaPedido.getQuantidade()))));
             } else {
                 pedidoAgrupado.setQuantidade(pedidoAgrupado.getQuantidade() - cadaPedido.getQuantidade());
-                pedidoAgrupado.setValorAcumulado(pedidoAgrupado.getValorAcumulado().subtract(cadaPedido.getPedido().getValor().multiply(BigDecimal.valueOf(cadaPedido.getQuantidade()))));
+                pedidoAgrupado.setValorAcumulado(pedidoAgrupado.getValorAcumulado().subtract(cadaPedido.getPedido()
+                        .getValor().multiply(BigDecimal.valueOf(cadaPedido.getQuantidade()))));
             }
             pedidosAgrupados.put(cadaPedido.getPedido().getAcao().getId(), pedidoAgrupado);
         }
 
-        // Depois de agrupado, busca o valor atual da acao, calcula a diferenca baseada nos pedidos e aplica o valor num novo historico valor
+        // depois de agrupado, busca o valor atual da acao, calcula a diferenca baseada nos pedidos e aplica o valor num novo historico valor
         for (var cadaAcao : pedidosAgrupados.entrySet()) {
             Long acaoID = cadaAcao.getKey();
             BigDecimal valorAtual = valorAcaoService.valorAtual(acaoID);
@@ -65,10 +68,10 @@ public class AjustarValorAcao {
             historicoValor.setAcao(cadaAcao.getValue().getAcao());
             historicoValorRepository.save(historicoValor);
 
-            log.info("Acao {} ajustada de R${} para R${}", historicoValor.getAcao().getNome(), valorAtual, valorAjustado);
+            log.info("acao {} ajustada de R${} para R${}", historicoValor.getAcao().getNome(), valorAtual, valorAjustado);
         }
 
-        // Exclui todos os pedidos que acabaram de liquidar o valor da acao, para nao executarem novamente
+        // exclui todos os pedidos que acabaram de liquidar o valor da acao, para nao executarem novamente
         pedidoExecutadoTempRepository.deleteAll(todosPedidos);
         log.info("Ajustes de valores executados com sucesso");
     }

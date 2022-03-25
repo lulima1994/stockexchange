@@ -15,5 +15,5 @@ public class CarteiraResponse {
     private String sigla;
     private Integer quantidade;
     private BigDecimal valorAtual;
-    //private BigDecimal custoMedio;
+    //private BigDecimal custoMedio; //valorAcao/quantidadeAcao
 }
